@@ -1,114 +1,131 @@
 <template>
 	<div class="flex flex-col items-center">
-		<div class="max-w-4xl">
-			<select
-				v-model.lazy="state"
-				class="border"
-				placeholder="state"
-			>
-				<option value="">Whole Malaysia</option>
-				<option
-					v-for="state in listStates"
-					:value="state"
+		<div class="max-w-lg w-full">
+			<div class="w-full flex gap-2">
+				<select
+					v-model.lazy="state"
+					class="flex-none rounded-md border border-gray-300 bg-white py-2 pl-2 pr-10 text-left transition duration-150 ease-in-out focus-within:border-blue-700 focus-within:outline-none focus-within:ring-1 focus-within:ring-blue-700 sm:text-sm sm:leading-5"
+					placeholder="state"
 				>
-					{{ state }}
-				</option>
-			</select>
-			<input
-				v-model.lazy="limit"
-				class="border"
-				placeholder="limit"
-			/>
-			<HeadlessCombobox
-				v-model="selectedItems"
-				name="items"
-				multiple
-			>
-				<HeadlessComboboxInput
-					@change="
-						queryItems = $event.target.value
-					"
-					:displayValue="(item) => item.item"
-					placeholder="Add item"
-				/>
-				<div class="relative">
-					<div
-						class="absolute mt-1 w-full rounded-md bg-white shadow-lg"
+					<option value="">Whole Malaysia</option>
+					<option
+						v-for="state in listStates"
+						:value="state"
 					>
-						<HeadlessComboboxOptions
-							class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+						{{ state }}
+					</option>
+				</select>
+				<div class="flex-grow">
+					<HeadlessCombobox
+						v-model="selectedItems"
+						name="items"
+						multiple
+					>
+						<HeadlessComboboxInput
+							@change="
+								queryItems =
+									$event
+										.target
+										.value
+							"
+							:displayValue="
+								(item) =>
+									item.item
+							"
+							placeholder="Add item"
+							class="relative w-full rounded-md border border-gray-300 bg-white py-2 pl-2 pr-10 text-left transition duration-150 ease-in-out focus-within:border-blue-700 focus-within:outline-none focus-within:ring-1 focus-within:ring-blue-700 sm:text-sm sm:leading-5"
+						/>
+						<div
+							class="relative max-w-full"
 						>
-							<HeadlessComboboxOption
-								v-if="
-									items.length
-								"
-								v-for="item in items"
-								:key="
-									item.item_code
-								"
-								as="template"
-								:value="
-									item.item_code
-								"
-								v-slot="{
-									active,
-									selected,
-								}"
-								><li
-									:class="[
-										active
-											? 'bg-amber-100 text-amber-900'
-											: 'text-gray-900',
-										'relative cursor-default select-none py-2 pl-10 pr-4',
-									]"
+							<div
+								class="absolute mt-1 w-full rounded-md bg-white shadow-lg"
+							>
+								<HeadlessComboboxOptions
+									class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
 								>
-									<span
+									<HeadlessComboboxOption
 										v-if="
-											item.item
+											items.length
 										"
-										:class="[
-											selected
-												? 'font-medium'
-												: 'font-normal',
-											'block truncate',
-										]"
-										>{{
-											item.item
-										}}</span
-									>
-									<span
-										:class="[
-											selected
-												? 'font-medium'
-												: 'font-normal',
-											'block truncate',
-										]"
-										>{{
-											item.unit
-										}}</span
-									>
-									<span
-										v-if="
-											selected
+										v-for="item in items"
+										:key="
+											item.item_code
 										"
-										class="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600"
-									>
-										Selected
-									</span>
-								</li>
-							</HeadlessComboboxOption>
-						</HeadlessComboboxOptions>
-					</div>
+										as="template"
+										:value="
+											item.item_code
+										"
+										v-slot="{
+											active,
+											selected,
+										}"
+										><li
+											:class="[
+												active
+													? 'bg-amber-100 text-amber-900'
+													: 'text-gray-900',
+												'relative cursor-default select-none py-2 pl-10 pr-4',
+											]"
+										>
+											<span
+												v-if="
+													item.item
+												"
+												:class="[
+													selected
+														? 'font-medium'
+														: 'font-normal',
+													'block truncate',
+												]"
+												>{{
+													item.item
+												}}</span
+											>
+											<span
+												:class="[
+													selected
+														? 'font-medium'
+														: 'font-normal',
+													'block truncate',
+												]"
+												>{{
+													item.unit
+												}}</span
+											>
+											<span
+												v-if="
+													selected
+												"
+												class="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-700"
+											>
+												<span
+													class="bg-amber-200 rounded px-0.5 aspect-square"
+												>
+													<Icon
+														name="lucide:check"
+													/>
+												</span>
+											</span>
+										</li>
+									</HeadlessComboboxOption>
+								</HeadlessComboboxOptions>
+							</div>
+						</div>
+					</HeadlessCombobox>
 				</div>
-			</HeadlessCombobox>
-			<input
-				v-model.lazy="date"
-				class="border"
-				placeholder="date"
-			/>
+			</div>
 			<div
 				v-if="selectedItemsData.length"
-				v-for="item in selectedItemsData"
+				v-for="item in selectedItemsData.sort(
+					(a, b) =>
+						selectedItems.indexOf(
+							a.item_code
+						) -
+						selectedItems.indexOf(
+							b.item_code
+						)
+				)"
 				@click="removeItem(item.item_code)"
 			>
 				{{ item.item }}{{ item.unit
@@ -139,125 +156,176 @@
 							selectedExpandPremise =
 								premise.premise_code
 						"
-						class="border p-4 justify-between flex flex-col gap-2 bg-white"
+						class="border p-4 justify-between flex flex-col gap-2 rounded-lg cursor-default shadow-md bg-white"
 					>
 						<div
 							class="flex flex-col gap-2"
 						>
-							<div class="mb-2">
-								{{
-									premise.premise_name
-								}}
+							<div
+								class="flex justify-between"
+							>
+								<div
+									class="flex-grow"
+								>
+									{{
+										premise.premise_name
+									}}
+								</div>
+								<div
+									class=""
+									v-if="
+										expandedPremise !=
+										premise.premise_code
+									"
+								>
+									<span
+										class="opacity-70 text-sm mr-2"
+										>Total:</span
+									>{{
+										premise.total
+									}}
+								</div>
 							</div>
 							<div
+								class="mt-2 flex flex-col gap-2"
 								v-if="
-									premise.premise_code ==
-										expandedPremise &&
-									premise
-										.items
-										.length
-								"
-								v-for="(
-									item,
-									index
-								) in premise.items"
-								class="grid grid-cols-8 text-xs"
-								@click="
-									removeItem(
-										item.item_code
+									selectedItemsData.filter(
+										(
+											i
+										) => {
+											return (
+												premise.items.findIndex(
+													(
+														j
+													) =>
+														j.item_code ==
+														i.item_code
+												) ==
+												-1
+											);
+										}
 									)
+										.length ||
+									expandedPremise ==
+										premise.premise_code
 								"
 							>
 								<div
-									class="col-span-5 flex"
-								>
-									<div
-										class="w-6 flex-none"
-									>
-										{{
-											index +
-											1
-										}}
-									</div>
-									<div>
-										{{
-											item.item
-										}}
-									</div>
-								</div>
-								<div
-									class="col-span-1 text-right tabular-nums"
-								>
-									{{
-										item.unit
-									}}
-								</div>
-								<div
-									class="col-span-2 text-right tabular-nums"
-								>
-									{{
-										parseFloat(
-											item.price
-										).toFixed(
-											2
+									v-if="
+										expandedPremise ==
+										premise.premise_code
+									"
+									v-for="(
+										item,
+										index
+									) in premise.items"
+									class="grid grid-cols-8 text-xs"
+									@click="
+										removeItem(
+											item.item_code
 										)
-									}}
-								</div>
-							</div>
-							<div
-								v-if="
-									premise
-										.items
-										.length
-								"
-								v-for="item in selectedItemsData.filter(
-									(i) => {
-										return (
-											premise.items.findIndex(
-												(
-													j
-												) =>
-													j.item_code ==
-													i.item_code
-											) ==
-											-1
-										);
-									}
-								)"
-								class="grid grid-cols-8 text-xs text-red-500"
-							>
-								<div
-									class="col-span-5 flex"
+									"
 								>
 									<div
-										class="w-6 flex-none"
+										class="col-span-5 flex"
 									>
-										-
+										<div
+											class="w-6 flex-none"
+										>
+											{{
+												index +
+												1
+											}}
+										</div>
+										<div>
+											{{
+												item.item
+											}}
+										</div>
 									</div>
-									<div>
+									<div
+										class="col-span-1 text-right tabular-nums"
+									>
 										{{
-											item.item
+											item.unit
+										}}
+									</div>
+									<div
+										class="col-span-2 text-right tabular-nums"
+									>
+										{{
+											parseFloat(
+												item.price
+											).toFixed(
+												2
+											)
 										}}
 									</div>
 								</div>
 								<div
-									class="col-span-1 text-right tabular-nums"
+									v-if="
+										premise
+											.items
+											.length
+									"
+									v-for="item in selectedItemsData.filter(
+										(
+											i
+										) => {
+											return (
+												premise.items.findIndex(
+													(
+														j
+													) =>
+														j.item_code ==
+														i.item_code
+												) ==
+												-1
+											);
+										}
+									)"
+									class="grid grid-cols-8 text-xs text-red-500"
 								>
-									{{
-										item.unit
-									}}
-								</div>
-								<div
-									class="col-span-2 text-right tabular-nums"
-								>
-									0.00
+									<div
+										class="col-span-5 flex"
+									>
+										<div
+											class="w-6 flex-none"
+										>
+											-
+										</div>
+										<div>
+											{{
+												item.item
+											}}
+										</div>
+									</div>
+									<div
+										class="col-span-1 text-right tabular-nums"
+									>
+										{{
+											item.unit
+										}}
+									</div>
+									<div
+										class="col-span-2 text-right tabular-nums"
+									>
+										N/A
+									</div>
 								</div>
 							</div>
 						</div>
-						<div></div>
-						<div class="self-end">
-							Total:
-							{{ premise.total }}
+						<div
+							class="self-end"
+							v-if="
+								expandedPremise ==
+								premise.premise_code
+							"
+						>
+							<span
+								class="opacity-70 text-sm mr-2"
+								>Total:</span
+							>{{ premise.total }}
 						</div>
 					</div>
 				</div>
@@ -336,19 +404,18 @@ function removeItem(value) {
 	selectedItems.value = selectedItems.value.filter((i) => i != value);
 }
 
-const selectedItemsData = computed(() => {
-	let data = [];
-	if (selectedItems.value.length && item_prices.value) {
-		for (let item of selectedItems.value) {
-			data.push(
-				item_prices.value.find(
-					(i) => i.item_code == item
-				)
-			);
-		}
-	}
-	return data;
-});
+const { data: selectedItemsData } = await useAsyncData(
+	"selectedItemsData",
+	async () => {
+		let query = client
+			.from("lookup_item")
+			.select("*")
+			.in("item_code", selectedItems.value);
+		const { data } = await query;
+		return data;
+	},
+	{ watch: selectedItems }
+);
 
 const allPremises = computed(() => {
 	if (item_prices.value) {
@@ -366,7 +433,7 @@ const allPremisesData = computed(() => {
 	if (allPremises.value.length) {
 		let data = [];
 		let length = 0;
-		allPremises.value.forEach((i) => {
+		for (const i of allPremises.value) {
 			const premiseName = item_prices.value.find(
 				(j) => j.premise_code == i
 			)?.premise;
@@ -376,7 +443,7 @@ const allPremisesData = computed(() => {
 			);
 			length = allItems.length;
 			let total = 0;
-			allItems.forEach((item) => {
+			for (const item of allItems) {
 				if (!isNaN(parseFloat(item.price))) {
 					total += parseFloat(item.price);
 				}
@@ -386,7 +453,7 @@ const allPremisesData = computed(() => {
 					unit: item.unit,
 					price: item.price,
 				});
-			});
+			}
 			total = total.toFixed(2);
 			if (
 				data.length &&
@@ -416,7 +483,7 @@ const allPremisesData = computed(() => {
 					],
 				});
 			}
-		});
+		}
 		return data;
 	}
 	return [];
