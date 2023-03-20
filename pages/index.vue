@@ -224,7 +224,15 @@
 									v-for="(
 										item,
 										index
-									) in premise.items"
+									) in premise.items.sort(
+					(a, b) =>
+						selectedItems.indexOf(
+							a.item_code
+						) -
+						selectedItems.indexOf(
+							b.item_code
+						)
+				)"
 									class="grid grid-cols-8"
 			
 								>
@@ -290,7 +298,15 @@
 												-1
 											);
 										}
-									)"
+									).sort(
+					(a, b) =>
+						selectedItems.indexOf(
+							a.item_code
+						) -
+						selectedItems.indexOf(
+							b.item_code
+						)
+				)"
 									class="grid grid-cols-8 text-red-500"
 								>
 									<div
