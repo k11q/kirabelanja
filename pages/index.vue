@@ -2,6 +2,7 @@
 	<div class="flex flex-col items-center">
 		<div class="max-w-lg w-full py-4">
 			<div class="w-full flex flex-col gap-4">
+			<h1 class="text-5xl font-bold my-2">KiraBelanja</h1>
 				<select
 					v-model.lazy="state"
 					class="flex-none rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left transition duration-150 ease-in-out focus-within:border-blue-700 focus-within:outline-none focus-within:ring-1 focus-within:ring-blue-700 sm:text-sm sm:leading-5"
