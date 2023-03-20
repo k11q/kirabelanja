@@ -204,6 +204,55 @@
 									}}
 								</div>
 							</div>
+							<div
+								v-if="
+									premise
+										.items
+										.length
+								"
+								v-for="item in selectedItemsData.filter(
+									(i) => {
+										return (
+											premise.items.findIndex(
+												(
+													j
+												) =>
+													j.item_code ==
+													i.item_code
+											) ==
+											-1
+										);
+									}
+								)"
+								class="grid grid-cols-8 text-xs text-red-500"
+							>
+								<div
+									class="col-span-5 flex"
+								>
+									<div
+										class="w-6 flex-none"
+									>
+										-
+									</div>
+									<div>
+										{{
+											item.item
+										}}
+									</div>
+								</div>
+								<div
+									class="col-span-1 text-right tabular-nums"
+								>
+									{{
+										item.unit
+									}}
+								</div>
+								<div
+									class="col-span-2 text-right tabular-nums"
+								>
+									0.00
+								</div>
+							</div>
 						</div>
 						<div></div>
 						<div class="self-end">
