@@ -1,6 +1,6 @@
 <template>
 	<div class="flex flex-col items-center">
-		<div class="max-w-7xl">
+		<div class="max-w-4xl">
 			<select
 				v-model.lazy="state"
 				class="border"
@@ -19,7 +19,6 @@
 				class="border"
 				placeholder="limit"
 			/>
-			{{ selectedItems }}
 			<HeadlessCombobox
 				v-model="selectedItems"
 				name="items"
@@ -30,53 +29,91 @@
 						queryItems = $event.target.value
 					"
 					:displayValue="(item) => item.item"
+					placeholder="Add item"
 				/>
-                                <div class="relative">
-                                <div class="absolute mt-1 w-full rounded-md bg-white shadow-lg">
-				<HeadlessComboboxOptions
-					class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
-				>
-					<HeadlessComboboxOption
-						v-slot="{ active, selected }"
-						v-for="item in items"
-						:key="item.id"
-						:value="item"
-						><li
-							:class="[
-								active
-									? 'bg-amber-100 text-amber-900'
-									: 'text-gray-900',
-								'relative cursor-default select-none py-2 pl-10 pr-4',
-							]"
+				<div class="relative">
+					<div
+						class="absolute mt-1 w-full rounded-md bg-white shadow-lg"
+					>
+						<HeadlessComboboxOptions
+							class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
 						>
-							<span
-								:class="[
-									selected
-										? 'font-medium'
-										: 'font-normal',
-									'block truncate',
-								]"
-								>{{
-									item.item
-								}}</span
-							>
-							<span
-								v-if="selected"
-								class="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600"
-							>
-								Selected
-							</span>
-						</li>
-					</HeadlessComboboxOption>
-				</HeadlessComboboxOptions>
-                        </div>
-                </div>
+							<HeadlessComboboxOption
+								v-if="
+									items.length
+								"
+								v-for="item in items"
+								:key="
+									item.item_code
+								"
+								as="template"
+								:value="
+									item.item_code
+								"
+								v-slot="{
+									active,
+									selected,
+								}"
+								><li
+									:class="[
+										active
+											? 'bg-amber-100 text-amber-900'
+											: 'text-gray-900',
+										'relative cursor-default select-none py-2 pl-10 pr-4',
+									]"
+								>
+									<span
+										v-if="
+											item.item
+										"
+										:class="[
+											selected
+												? 'font-medium'
+												: 'font-normal',
+											'block truncate',
+										]"
+										>{{
+											item.item
+										}}</span
+									>
+									<span
+										:class="[
+											selected
+												? 'font-medium'
+												: 'font-normal',
+											'block truncate',
+										]"
+										>{{
+											item.unit
+										}}</span
+									>
+									<span
+										v-if="
+											selected
+										"
+										class="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600"
+									>
+										Selected
+									</span>
+								</li>
+							</HeadlessComboboxOption>
+						</HeadlessComboboxOptions>
+					</div>
+				</div>
 			</HeadlessCombobox>
 			<input
 				v-model.lazy="date"
 				class="border"
 				placeholder="date"
 			/>
+			<div
+				v-if="selectedItemsData.length"
+				v-for="item in selectedItemsData"
+				@click="removeItem(item.item_code)"
+			>
+				{{ item.item }}{{ item.unit
+				}}{{ item.item_group }}{{ item.item_category }}
+			</div>
 			<div
 				v-if="allPremisesData"
 				v-for="premiseSection in allPremisesData.sort(
@@ -85,8 +122,10 @@
 					}
 				)"
 			>
-				<h2 class="px-4 text-2xl font-semibold">Total Items: {{ premiseSection.length }}</h2>
-				<div class="grid grid-cols-3 gap-3 p-4">
+				<h2 class="px-4 text-2xl font-semibold">
+					Total Items: {{ premiseSection.length }}
+				</h2>
+				<div class="flex flex-col gap-3 p-4">
 					<div
 						v-for="premise in premiseSection.premises.sort(
 							function (a, b) {
@@ -96,7 +135,11 @@
 								);
 							}
 						)"
-						class="border p-4 justify-between flex flex-col gap-2"
+						@click="
+							selectedExpandPremise =
+								premise.premise_code
+						"
+						class="border p-4 justify-between flex flex-col gap-2 bg-white"
 					>
 						<div
 							class="flex flex-col gap-2"
@@ -107,20 +150,51 @@
 								}}
 							</div>
 							<div
+								v-if="
+									premise.premise_code ==
+										expandedPremise &&
+									premise
+										.items
+										.length
+								"
 								v-for="(
 									item,
 									index
 								) in premise.items"
 								class="grid grid-cols-8 text-xs"
+								@click="
+									removeItem(
+										item.item_code
+									)
+								"
 							>
-								<div class="col-span-6 flex">
-                                                                <div class="w-6 flex-none">{{ index + 1 }}</div>
-                                                                <div>{{
-										item.item
-									}}</div>
-									
+								<div
+									class="col-span-5 flex"
+								>
+									<div
+										class="w-6 flex-none"
+									>
+										{{
+											index +
+											1
+										}}
+									</div>
+									<div>
+										{{
+											item.item
+										}}
+									</div>
 								</div>
-								<div class="col-span-2 text-right tabular-nums">
+								<div
+									class="col-span-1 text-right tabular-nums"
+								>
+									{{
+										item.unit
+									}}
+								</div>
+								<div
+									class="col-span-2 text-right tabular-nums"
+								>
 									{{
 										parseFloat(
 											item.price
@@ -139,34 +213,6 @@
 					</div>
 				</div>
 			</div>
-			<!--
-                <table class="whitespace-nowrap">
-                <thead class=" grid " style="grid-template-columns: repeat(14, minmax(0, 1fr));">
-                <th class="col-span-3">Item</th>
-                <th class="col-span-1">Unit</th>
-                <th class="col-span-1">Price</th>
-                <th class="col-span-2">Premise</th>
-                <th class="col-span-2">Address</th>
-                <th class="col-span-1">District</th>
-                <th class="col-span-1">State</th>
-                <th class="col-span-1">Date</th>
-                <th class="col-span-2">Category</th>
-        </thead>
-                <tbody>
-		<tr v-if="item_prices" v-for="item in item_prices.sort(function(x, y){return x?.price - y?.price})" class="border-y grid max-w-full [&>*]:overflow-hidden [&>*]:text-ellipsis" style="grid-template-columns: repeat(14, minmax(0, 1fr));">
-                <td class="col-span-3">{{ item?.item }}</td>
-                <td class="col-span-1">{{ item?.unit }}</td>
-                <td class="col-span-1">{{ item?.price }}</td>
-                <td class="col-span-2">{{ item?.premise }}</td>
-                <td class="col-span-2">{{ item?.address }}</td>
-                <td class="col-span-1">{{ item?.district }}</td>
-                <td class="col-span-1">{{ item?.state }}</td>
-                <td class="col-span-1">{{ item?.date }}</td>
-                <td class="col-span-2">{{ item?.item_category }}</td>
-		</tr>
-        </tbody>
-        </table>
-        -->
 		</div>
 	</div>
 </template>
@@ -198,13 +244,6 @@ const date = ref("2023-03-14");
 const state = ref("Kuala Lumpur");
 const queryItems = ref();
 const selectedItems = ref([]);
-const selectedItemsCode = computed(() => {
-	if (selectedItems.value) {
-		const arr = selectedItems.value.map((item) => item.item_code);
-		return arr;
-	}
-	return null;
-});
 
 const { data: items } = await useAsyncData(
 	"items",
@@ -226,8 +265,8 @@ const { data: item_prices } = await useAsyncData(
 	"item_prices",
 	async () => {
 		let query = client.from("item_prices").select("*");
-		if (selectedItemsCode.value) {
-			query = query.in("item_code", selectedItemsCode.value);
+		if (selectedItems.value) {
+			query = query.in("item_code", selectedItems.value);
 		}
 		if (state.value) {
 			query = query.textSearch("state", `'${state.value}'`, {
@@ -244,10 +283,22 @@ const { data: item_prices } = await useAsyncData(
 	{ watch: [state, selectedItems, date, limit] }
 );
 
-const allStates = computed(() => {
-	return item_prices.value
-		.map((item) => item.state)
-		.filter((value, index, self) => self.indexOf(value) === index);
+function removeItem(value) {
+	selectedItems.value = selectedItems.value.filter((i) => i != value);
+}
+
+const selectedItemsData = computed(() => {
+	let data = [];
+	if (selectedItems.value.length && item_prices.value) {
+		for (let item of selectedItems.value) {
+			data.push(
+				item_prices.value.find(
+					(i) => i.item_code == item
+				)
+			);
+		}
+	}
+	return data;
 });
 
 const allPremises = computed(() => {
@@ -282,6 +333,8 @@ const allPremisesData = computed(() => {
 				}
 				obj.push({
 					item: item.item,
+					item_code: item.item_code,
+					unit: item.unit,
 					price: item.price,
 				});
 			});
@@ -296,6 +349,7 @@ const allPremisesData = computed(() => {
 					)
 				].premises.push({
 					premise_name: premiseName,
+					premise_code: i,
 					items: obj,
 					total: total,
 				});
@@ -306,6 +360,7 @@ const allPremisesData = computed(() => {
 						{
 							premise_name:
 								premiseName,
+							premise_code: i,
 							items: obj,
 							total: total,
 						},
@@ -316,5 +371,34 @@ const allPremisesData = computed(() => {
 		return data;
 	}
 	return [];
+});
+
+//manually expand dialog
+const selectedExpandPremise = ref();
+//clear selected dialog when new data
+watch(allPremises, () => {
+	selectedExpandPremise.value = null;
+});
+
+//set expanded dialog
+const expandedPremise = computed(() => {
+	if (selectedExpandPremise.value) {
+		return selectedExpandPremise.value;
+	}
+	if (
+		allPremisesData.value.length < 1 ||
+		allPremisesData.value[0].premises.length < 1
+	) {
+		return null;
+	}
+	const sortedAllPremises = allPremisesData.value.sort(function (a, b) {
+		return b.length - a.length;
+	});
+	const sortedPremisesByTotal = sortedAllPremises[0].premises.sort(
+		function (a, b) {
+			return a.total - b.total;
+		}
+	);
+	return sortedPremisesByTotal[0].premise_code;
 });
 </script>
