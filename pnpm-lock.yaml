@@ -8,6 +8,7 @@ specifiers:
   axios: ^1.3.4
   dotenv: ^16.0.3
   nuxt: ^3.3.1
+  nuxt-headlessui: ^1.1.1
   papaparse: ^5.4.0
   tsx: ^3.12.5
 
@@ -17,6 +18,7 @@ dependencies:
   '@supabase/supabase-js': 2.11.0
   axios: 1.3.4
   dotenv: 16.0.3
+  nuxt-headlessui: 1.1.1
   papaparse: 5.4.0
   tsx: 3.12.5
 
@@ -748,6 +750,13 @@ packages:
     os: [win32]
     requiresBuild: true
     optional: true
+
+  /@headlessui/vue/1.7.12:
+    resolution: {integrity: sha512-IV0k1I2I8Bj37HljFF231Y9cpldfiucf+inMCxA/VPoQT6UTxo0N/rb78CrogBxXNfsPxKmz3y/nlv+eRz6zvg==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      vue: ^3.2.0
+    dev: false
 
   /@ioredis/commands/1.2.0:
     resolution: {integrity: sha512-Sx1pU8EM64o2BrqNpEO1CNLtKQwyhuXuqyfH7oGKCk+1a33d2r5saW8zNwm3j6BTExtjrv2BxTgzzkMwts6vGg==}
@@ -3886,6 +3895,18 @@ packages:
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
+
+  /nuxt-headlessui/1.1.1:
+    resolution: {integrity: sha512-sf8qZQvGDaI+uNnKuynFGY+VXScDNEj3W0LMjv2XH4jO4ksQzbliCB9Hl5cdd/VIFPVmnZm+dnneURSI4/1fXw==}
+    dependencies:
+      '@headlessui/vue': 1.7.12
+      '@nuxt/kit': 3.3.1
+      pathe: 1.1.0
+    transitivePeerDependencies:
+      - rollup
+      - supports-color
+      - vue
+    dev: false
 
   /nuxt/3.3.1_@types+node@18.15.3:
     resolution: {integrity: sha512-1DTFXEr+FlZO/hyw765cb9a/AiGysHIGLNl8NGJtURwUWC4gd+Z3y5DnL04PE5fVJ08yB/KJwc0t6StijbL8wQ==}
