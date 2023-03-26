@@ -3,7 +3,7 @@
 		<div class="max-w-lg w-full py-4">
 			<div class="w-full flex flex-col gap-4">
 			<h1 class="text-5xl font-bold my-2 px-4">KiraBelanja</h1>
-			<p class="text-xs bg-neutral-700">Last update: 14/3/2023</p>
+			<p class="text-sm text-neutral-600 px-4">Last update: 14/3/2023</p>
 			<div class="px-4">
 				<select
 					v-model.lazy="state"
