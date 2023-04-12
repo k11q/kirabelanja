@@ -4,6 +4,8 @@
 			<div class="w-full flex flex-col gap-4">
 			<h1 class="text-5xl font-bold my-2 px-4">KiraBelanja</h1>
 			<p class="text-sm text-neutral-600 px-4">Last update: 14/3/2023</p>
+			<div class="text-4xl">Sorry, this app is no longer maintained. Contact <a href="twitter.com/khairulhaaziqq">Khairul</a> if you are interested in anything.</div>
+			<!--
 			<div class="px-4">
 				<select
 					v-model.lazy="state"
@@ -364,6 +366,7 @@
 				</div>
 			</div>
                 </div>
+		-->
 		</div>
 	</div>
 </template>
